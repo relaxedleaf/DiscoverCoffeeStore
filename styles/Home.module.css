@@ -26,10 +26,6 @@
 	row-gap: 1.5rem /* 24px */;
 }
 
-.card {
-	justify-content: center;
-}
-
 .heading2 {
 	font-size: 2.25rem;
 	line-height: 2.5rem;

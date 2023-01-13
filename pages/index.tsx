@@ -1,9 +1,31 @@
+import * as importedCoffeeStores from '../data/coffee-stores.json';
+
 import Banner from '../components/banner/banner';
+import Card from '../components/card/card';
+import { GetStaticProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import styles from '../styles/Home.module.css';
 
-const Home = () => {
+export const getStaticProps: GetStaticProps = async (context) => {
+	// const data = fetch(...)
+	return {
+		props: {
+			coffeeStores: importedCoffeeStores,
+		}, // Will be passed to the page component as props
+	};
+};
+
+type CoffeStore = {
+	id: string;
+	name: string;
+	imgUrl: string;
+	websiteUrl: string;
+	address: string;
+	neighbourhood: string;
+};
+
+const Home = ({ coffeeStores }: { coffeeStores: Array<CoffeStore> }) => {
 	const handleOnBannerBtnClick = () => {
 		console.log('Clicked');
 	};
@@ -34,6 +56,18 @@ const Home = () => {
 						height={400}
 						alt='hero image'
 					/>
+				</div>
+				<div className={styles.cardLayout}>
+					{coffeeStores.map((coffeeStore) => {
+						return (
+							<Card
+								key={coffeeStore.id}
+								name={coffeeStore.name}
+								imgUrl={coffeeStore.imgUrl}
+								href={`/coffee-store/${coffeeStore.id}`}
+							/>
+						);
+					})}
 				</div>
 			</main>
 		</>
