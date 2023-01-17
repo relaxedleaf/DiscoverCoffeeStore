@@ -45,6 +45,7 @@ type FourSquarePlaceResponse = {
 			locality: string;
 			postcode: string;
 			region: string;
+			neighborhood?: Array<string>;
 		};
 		name: string;
 		related_places: any;

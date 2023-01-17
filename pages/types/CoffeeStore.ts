@@ -4,7 +4,7 @@ type CoffeeStore = {
 	imgUrl: string;
 	websiteUrl: string;
 	address: string;
-	neighbourhood: string;
+	neighborhood: string;
 };
 
 export default CoffeeStore;

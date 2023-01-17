@@ -1,40 +1,14 @@
 import Banner from '../components/banner/banner';
 import Card from '../components/card/card';
 import CoffeeStore from './types/CoffeeStore';
-import FourSquarePlaceResponse from './types/FourSquarePlaceResponse';
 import { GetStaticProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
+import fetchCoffeeStores from '../lib/coffee-store';
 import styles from '../styles/Home.module.css';
 
 export const getStaticProps: GetStaticProps = async (context) => {
-	const options = {
-		method: 'GET',
-		headers: {
-			accept: 'application/json',
-			Authorization: 'fsq3jEsIGB+Nu7JXvYMvo4FXA5Tmju1YkrVN3RMYlzVxt10=',
-		},
-	};
-
-	const response = await fetch(
-		'https://api.foursquare.com/v3/places/search?query=coffee%20stores&ll=36.51%2C-94.21&limit=6',
-		options
-	)
-		.then((response) => response.json() as Promise<FourSquarePlaceResponse>)
-		.catch((err) => console.error(err));
-
-	const coffeeStores: Array<CoffeeStore> = response
-		? response.results.map((result) => {
-				return {
-					id: result.fsq_id,
-					name: result.name,
-					imgUrl: 'https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80', // result.categories.length? result.categories[0].icon;
-					websiteUrl: '',
-					address: result.location.formatted_address,
-					neighbourhood: '',
-				};
-		  })
-		: [];
+	const coffeeStores = await fetchCoffeeStores();
 	return {
 		props: {
 			coffeeStores,
@@ -43,7 +17,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 const Home = ({ coffeeStores }: { coffeeStores: Array<CoffeeStore> }) => {
-	console.log(coffeeStores);
 	const handleOnBannerBtnClick = () => {
 		console.log('Clicked');
 	};
