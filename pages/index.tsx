@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import Banner from '../components/banner/banner';
 import Card from '../components/card/card';
 import CoffeeStore from './types/CoffeeStore';
@@ -6,6 +8,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import fetchCoffeeStores from '../lib/coffee-store';
 import styles from '../styles/Home.module.css';
+import useTrackLocation from '../hooks/useTrackLocation';
 
 export const getStaticProps: GetStaticProps = async (context) => {
 	const coffeeStores = await fetchCoffeeStores();
@@ -16,9 +19,26 @@ export const getStaticProps: GetStaticProps = async (context) => {
 	};
 };
 
+const DEFAULT_BUTTON_TEXT = 'View stores nearby';
 const Home = ({ coffeeStores }: { coffeeStores: Array<CoffeeStore> }) => {
+	const { handleTrackLocation, latLong, locErrorMSg, isFindingLocation } =
+		useTrackLocation();
+	const [btnText, setBtnText] = useState(DEFAULT_BUTTON_TEXT);
+
+	useEffect(() => {
+		if (isFindingLocation) {
+			setBtnText('Locating...');
+		} else {
+			setBtnText(DEFAULT_BUTTON_TEXT);
+		}
+	}, [isFindingLocation]);
+	console.log({
+		latLong,
+		locErrorMSg,
+	});
+
 	const handleOnBannerBtnClick = () => {
-		console.log('Clicked');
+		handleTrackLocation();
 	};
 
 	return (
@@ -36,10 +56,8 @@ const Home = ({ coffeeStores }: { coffeeStores: Array<CoffeeStore> }) => {
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 			<main className={styles.main}>
-				<Banner
-					buttonText='View stores nearby'
-					onClick={handleOnBannerBtnClick}
-				/>
+				<Banner buttonText={btnText} onClick={handleOnBannerBtnClick} />
+				{locErrorMSg && <p>Something went wrong...</p>}
 				<div className={styles.heroImage}>
 					<Image
 						src='/static/hero-image.png'
@@ -49,7 +67,7 @@ const Home = ({ coffeeStores }: { coffeeStores: Array<CoffeeStore> }) => {
 					/>
 				</div>
 				{coffeeStores.length > 0 && (
-					<>
+					<div className={styles.sectionWrapper}>
 						<h2 className={styles.heading2}>Toronto Stores</h2>
 						<div className={styles.cardLayout}>
 							{coffeeStores.map((coffeeStore) => {
@@ -63,7 +81,7 @@ const Home = ({ coffeeStores }: { coffeeStores: Array<CoffeeStore> }) => {
 								);
 							})}
 						</div>
-					</>
+					</div>
 				)}
 			</main>
 		</>
