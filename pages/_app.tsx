@@ -11,7 +11,7 @@ type InitialStateType = {
 	coffeeStore: Array<CoffeeStore>;
 };
 
-enum ACTION_TYPES {
+export enum ACTION_TYPES {
 	SET_LAT_LONG = 'SET_LAT_LONG',
 	SET_COFFEE_STORES = 'SET_COFFEE_STORES',
 }
@@ -26,7 +26,7 @@ const initialState = {
 	coffeeStore: [] as Array<CoffeeStore>,
 };
 
-const StoreContext = createContext<{
+export const StoreContext = createContext<{
 	state: InitialStateType;
 	dispatch: Dispatch<any>;
 }>({
