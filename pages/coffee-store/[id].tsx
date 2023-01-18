@@ -14,13 +14,14 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
 	return {
 		props: {
-			coffeeStore: coffeeStores.find((store) => {
-				if (!params || params.id === undefined) {
-					return false;
-				}
+			coffeeStore:
+				coffeeStores.find((store) => {
+					if (!params || params.id === undefined) {
+						return false;
+					}
 
-				return store.id === params.id;
-			}),
+					return store.id === params.id;
+				}) || {},
 		},
 	};
 };

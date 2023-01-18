@@ -24,6 +24,10 @@ const Home = ({ coffeeStores }: { coffeeStores: Array<CoffeeStore> }) => {
 	const { handleTrackLocation, latLong, locErrorMSg, isFindingLocation } =
 		useTrackLocation();
 	const [btnText, setBtnText] = useState(DEFAULT_BUTTON_TEXT);
+	const [coffeeStoresNearMe, setCoffeeStoresNearMe] = useState<
+		Array<CoffeeStore>
+	>([]);
+	const [coffeeStoresError, setCoffeeStoresError] = useState<string>('');
 
 	useEffect(() => {
 		if (isFindingLocation) {
@@ -32,6 +36,31 @@ const Home = ({ coffeeStores }: { coffeeStores: Array<CoffeeStore> }) => {
 			setBtnText(DEFAULT_BUTTON_TEXT);
 		}
 	}, [isFindingLocation]);
+
+	useEffect(() => {
+		let mounted = true;
+		if (latLong) {
+			try {
+				fetchCoffeeStores(latLong, 30).then((stores) => {
+					if (mounted) {
+						setCoffeeStoresNearMe(stores);
+					}
+				});
+			} catch (err: any) {
+				if (typeof err === 'string') {
+					setCoffeeStoresError(err);
+				} else if (err instanceof Error) {
+					setCoffeeStoresError(err.message);
+				} else {
+					setCoffeeStoresError('Unknown coffee store error');
+				}
+			}
+		}
+		return () => {
+			mounted = false;
+		};
+	}, [latLong]);
+
 	console.log({
 		latLong,
 		locErrorMSg,
@@ -58,6 +87,7 @@ const Home = ({ coffeeStores }: { coffeeStores: Array<CoffeeStore> }) => {
 			<main className={styles.main}>
 				<Banner buttonText={btnText} onClick={handleOnBannerBtnClick} />
 				{locErrorMSg && <p>Something went wrong...</p>}
+				{coffeeStoresError && <p>{coffeeStoresError}</p>}
 				<div className={styles.heroImage}>
 					<Image
 						src='/static/hero-image.png'
@@ -66,25 +96,45 @@ const Home = ({ coffeeStores }: { coffeeStores: Array<CoffeeStore> }) => {
 						alt='hero image'
 					/>
 				</div>
-				{coffeeStores.length > 0 && (
-					<div className={styles.sectionWrapper}>
-						<h2 className={styles.heading2}>Toronto Stores</h2>
-						<div className={styles.cardLayout}>
-							{coffeeStores.map((coffeeStore) => {
-								return (
-									<Card
-										key={coffeeStore.id}
-										name={coffeeStore.name}
-										imgUrl={coffeeStore.imgUrl}
-										href={`/coffee-store/${coffeeStore.id}`}
-									/>
-								);
-							})}
-						</div>
-					</div>
-				)}
+				<CoffeeStoreSection
+					coffeeStores={coffeeStoresNearMe}
+					title={'Stores near me'}
+				/>
+				<CoffeeStoreSection
+					coffeeStores={coffeeStores}
+					title={'Toronto Stores'}
+				/>
 			</main>
 		</>
+	);
+};
+
+const CoffeeStoreSection = ({
+	coffeeStores,
+	title,
+}: {
+	coffeeStores: Array<CoffeeStore>;
+	title: string;
+}) => {
+	if (!coffeeStores.length) {
+		return <></>;
+	}
+	return (
+		<div className={styles.sectionWrapper}>
+			<h2 className={styles.heading2}>{title}</h2>
+			<div className={styles.cardLayout}>
+				{coffeeStores.map((coffeeStore) => {
+					return (
+						<Card
+							key={coffeeStore.id}
+							name={coffeeStore.name}
+							imgUrl={coffeeStore.imgUrl}
+							href={`/coffee-store/${coffeeStore.id}`}
+						/>
+					);
+				})}
+			</div>
+		</div>
 	);
 };
 

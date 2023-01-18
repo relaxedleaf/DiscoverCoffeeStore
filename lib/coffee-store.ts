@@ -3,7 +3,7 @@ import FourSquarePlaceResponse from '../pages/types/FourSquarePlaceResponse';
 import { createApi } from 'unsplash-js';
 
 const unsplash = createApi({
-	accessKey: process.env.UNSPLASH_ACCESS_KEY as string,
+	accessKey: process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY as string,
 });
 
 const getUrlForCoffeeStores = ({
@@ -22,7 +22,7 @@ const getCoffeeStorePhotos = async () => {
 	const photos = await unsplash.search.getPhotos({
 		query: 'coffee shop',
 		page: 1,
-		perPage: 30,
+		perPage: 40,
 		orientation: 'landscape',
 	});
 
@@ -32,21 +32,21 @@ const getCoffeeStorePhotos = async () => {
 	return photoUrls;
 };
 
-const fetchCoffeeStores = async () => {
+const fetchCoffeeStores = async (latLong?: string, limit?: number) => {
 	const photos = await getCoffeeStorePhotos();
 	const options = {
 		method: 'GET',
 		headers: {
 			accept: 'application/json',
-			Authorization: process.env.FOURSQUARE_API_KEY as string,
+			Authorization: process.env.NEXT_PUBLIC_FOURSQUARE_API_KEY as string,
 		},
 	};
 
 	const response = await fetch(
 		getUrlForCoffeeStores({
-			latLong: '36.51%2C-94.21',
+			latLong: latLong || '36.51,-94.21',
 			query: 'coffee',
-			limit: 6,
+			limit: limit || 6,
 		}),
 		options
 	)
