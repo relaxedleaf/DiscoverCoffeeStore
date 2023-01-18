@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { ACTION_TYPES, StoreContext } from '../store/storeContext';
+import { useContext, useEffect, useState } from 'react';
 
 import Banner from '../components/banner/banner';
 import Card from '../components/card/card';
@@ -21,12 +22,15 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 const DEFAULT_BUTTON_TEXT = 'View stores nearby';
 const Home = ({ coffeeStores }: { coffeeStores: Array<CoffeeStore> }) => {
-	const { handleTrackLocation, latLong, locErrorMSg, isFindingLocation } =
+	const { handleTrackLocation, locErrorMSg, isFindingLocation } =
 		useTrackLocation();
 	const [btnText, setBtnText] = useState(DEFAULT_BUTTON_TEXT);
-	const [coffeeStoresNearMe, setCoffeeStoresNearMe] = useState<
-		Array<CoffeeStore>
-	>([]);
+
+	const {
+		dispatch,
+		state: { coffeeStoresNearMe, latLong },
+	} = useContext(StoreContext);
+
 	const [coffeeStoresError, setCoffeeStoresError] = useState<string>('');
 
 	useEffect(() => {
@@ -43,7 +47,12 @@ const Home = ({ coffeeStores }: { coffeeStores: Array<CoffeeStore> }) => {
 			try {
 				fetchCoffeeStores(latLong, 30).then((stores) => {
 					if (mounted) {
-						setCoffeeStoresNearMe(stores);
+						dispatch({
+							type: ACTION_TYPES.SET_COFFEE_STORES,
+							payload: {
+								coffeeStoresNearMe: stores,
+							},
+						});
 					}
 				});
 			} catch (err: any) {
@@ -60,11 +69,6 @@ const Home = ({ coffeeStores }: { coffeeStores: Array<CoffeeStore> }) => {
 			mounted = false;
 		};
 	}, [latLong]);
-
-	console.log({
-		latLong,
-		locErrorMSg,
-	});
 
 	const handleOnBannerBtnClick = () => {
 		handleTrackLocation();

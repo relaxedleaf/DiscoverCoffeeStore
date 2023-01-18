@@ -8,6 +8,8 @@ import styles from './coffee-store.module.scss';
 import Image from 'next/image';
 import classNames from 'classnames';
 import fetchCoffeeStores from '../../lib/coffee-store';
+import { useContext, useEffect, useState } from 'react';
+import { StoreContext } from '../../store/storeContext';
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
 	const coffeeStores = await fetchCoffeeStores();
@@ -21,7 +23,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 					}
 
 					return store.id === params.id;
-				}) || {},
+				}) || null,
 		},
 	};
 };
@@ -41,7 +43,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 	};
 };
 
-const CoffeeStore = ({ coffeeStore }: { coffeeStore: CoffeeStore }) => {
+const CoffeeStore = (props: { coffeeStore: CoffeeStore | null }) => {
 	const router = useRouter();
 
 	// Does route exist in getStaticPaths
@@ -49,9 +51,26 @@ const CoffeeStore = ({ coffeeStore }: { coffeeStore: CoffeeStore }) => {
 		return 'Loading';
 	}
 
-	// if (!coffeeStore) {
-	// 	return 'fart';
-	// }
+	const [coffeeStore, setCoffeeStore] = useState(props.coffeeStore);
+	const id = router.query.id;
+
+	const {
+		state: { coffeeStoresNearMe },
+	} = useContext(StoreContext);
+
+	useEffect(() => {
+		if (id && !props.coffeeStore && coffeeStoresNearMe.length) {
+			setCoffeeStore(
+				coffeeStoresNearMe.find((store) => {
+					return store.id === id;
+				}) || null
+			);
+		}
+	}, [id, props.coffeeStore, coffeeStoresNearMe]);
+
+	if (!coffeeStore) {
+		return 'Loading';
+	}
 
 	const { address, name, neighborhood, imgUrl } = coffeeStore;
 
