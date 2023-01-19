@@ -7,6 +7,7 @@ import CoffeeStore from './types/CoffeeStore';
 import { GetStaticProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
+import axios from 'axios';
 import fetchCoffeeStores from '../lib/coffee-store';
 import styles from '../styles/Home.module.css';
 import useTrackLocation from '../hooks/useTrackLocation';
@@ -45,16 +46,25 @@ const Home = ({ coffeeStores }: { coffeeStores: Array<CoffeeStore> }) => {
 		let mounted = true;
 		if (latLong) {
 			try {
-				fetchCoffeeStores(latLong, 30).then((stores) => {
-					if (mounted) {
-						dispatch({
-							type: ACTION_TYPES.SET_COFFEE_STORES,
-							payload: {
-								coffeeStoresNearMe: stores,
-							},
-						});
-					}
-				});
+				axios
+					.get('/api/getCoffeeStoresByLocation', {
+						params: {
+							latLong,
+							limit: 30,
+						},
+					})
+					.then((res) => {
+						const stores = res.data as Array<CoffeeStore>;
+						if (mounted) {
+							dispatch({
+								type: ACTION_TYPES.SET_COFFEE_STORES,
+								payload: {
+									coffeeStoresNearMe: stores,
+								},
+							});
+							setCoffeeStoresError('');
+						}
+					});
 			} catch (err: any) {
 				if (typeof err === 'string') {
 					setCoffeeStoresError(err);

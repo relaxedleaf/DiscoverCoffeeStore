@@ -32,7 +32,10 @@ const getCoffeeStorePhotos = async () => {
 	return photoUrls;
 };
 
-const fetchCoffeeStores = async (latLong?: string, limit?: number) => {
+const fetchCoffeeStores = async (
+	latLong: string = '36.51,-94.21',
+	limit: number = 6
+) => {
 	const photos = await getCoffeeStorePhotos();
 	const options = {
 		method: 'GET',
@@ -46,7 +49,7 @@ const fetchCoffeeStores = async (latLong?: string, limit?: number) => {
 		getUrlForCoffeeStores({
 			latLong: latLong || '36.51,-94.21',
 			query: 'coffee',
-			limit: limit || 6,
+			limit,
 		}),
 		options
 	)
