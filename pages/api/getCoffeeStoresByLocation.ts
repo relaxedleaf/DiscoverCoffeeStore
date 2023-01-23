@@ -1,15 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import CoffeeStore from '../types/CoffeeStore';
+import ErrorResponse from '../types/ErrorResponse';
 import fetchCoffeeStores from '../../lib/coffee-store';
 
 type QueryData = {
 	latLong: string;
 	limit: string;
-};
-
-type ErrorResponse = {
-	message: string;
 };
 
 const getCoffeeStoresByLocation = async (
