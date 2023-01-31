@@ -8,8 +8,9 @@ import styles from './coffee-store.module.scss';
 import Image from 'next/image';
 import classNames from 'classnames';
 import fetchCoffeeStores from '../../lib/coffee-store';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { StoreContext } from '../../store/storeContext';
+import axios from 'axios';
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
 	const coffeeStores = await fetchCoffeeStores();
@@ -58,13 +59,27 @@ const CoffeeStore = (props: { coffeeStore: CoffeeStore | null }) => {
 		state: { coffeeStoresNearMe },
 	} = useContext(StoreContext);
 
+	const handleCreateCoffeeStore = useCallback(async (cs?: CoffeeStore) => {
+		try {
+			const response = await axios.post('/api/insertCoffeeStore', {
+				...cs,
+			});
+		} catch (err) {}
+	}, []);
+
 	useEffect(() => {
 		if (id && !props.coffeeStore && coffeeStoresNearMe.length) {
-			setCoffeeStore(
+			const cs =
 				coffeeStoresNearMe.find((store) => {
 					return store.id === id;
-				}) || null
-			);
+				}) || null;
+
+			if (cs) {
+				setCoffeeStore(cs);
+				handleCreateCoffeeStore(cs);
+			}
+		} else if (props.coffeeStore){
+			handleCreateCoffeeStore(props.coffeeStore);
 		}
 	}, [id, props.coffeeStore, coffeeStoresNearMe]);
 
