@@ -1,6 +1,7 @@
 import CoffeeStore from '../pages/types/CoffeeStore';
 import FourSquarePlaceResponse from '../pages/types/FourSquarePlaceResponse';
 import { createApi } from 'unsplash-js';
+import { table } from './utils/airtable';
 
 const unsplash = createApi({
 	accessKey: process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY as string,
@@ -71,7 +72,7 @@ const fetchCoffeeStores = async (
 						neighborhood && neighborhood.length
 							? neighborhood[0]
 							: '',
-					voting: 0
+					voting: 0,
 				};
 		  })
 		: [];
@@ -79,4 +80,5 @@ const fetchCoffeeStores = async (
 	return coffeeStores;
 };
 
-export default fetchCoffeeStores;
+
+export { fetchCoffeeStores };

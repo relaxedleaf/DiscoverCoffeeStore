@@ -7,7 +7,7 @@ import Head from 'next/head';
 import styles from './coffee-store.module.scss';
 import Image from 'next/image';
 import classNames from 'classnames';
-import fetchCoffeeStores from '../../lib/coffee-store';
+import {fetchCoffeeStores} from '../../lib/coffee-store';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { StoreContext } from '../../store/storeContext';
 import axios from 'axios';

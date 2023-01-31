@@ -2,14 +2,14 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import CoffeeStore from '../types/CoffeeStore';
 import ErrorResponse from '../types/ErrorResponse';
-import { fetchCoffeeStores } from '../../lib/coffee-store';
+
+import { airtableRecordToCoffeeStore, table } from '../../lib/utils/airtable';
 
 type QueryData = {
-	latLong: string;
-	limit: string;
+	id: string;
 };
 
-const getCoffeeStoresByLocation = async (
+const getCoffeeStoreById = async (
 	req: NextApiRequest,
 	res: NextApiResponse<Array<CoffeeStore> | ErrorResponse>
 ) => {
@@ -21,10 +21,17 @@ const getCoffeeStoresByLocation = async (
 	}
 
 	try {
-		const { latLong, limit } = query;
+		const { id } = query;
 
-		const response = await fetchCoffeeStores(latLong, +limit);
-		res.status(200).json(response);
+		const findCoffeeStoreRecords = await table
+			.select({
+				filterByFormula: `id="${id}"`,
+			})
+			.firstPage();
+
+		if (findCoffeeStoreRecords.length) {
+            res.json(airtableRecordToCoffeeStore(findCoffeeStoreRecords));
+		}
 	} catch (err) {
 		console.error('There is an error', err);
 		res.status(500).json({ message: 'Oh no! Something went wrong' });
@@ -32,17 +39,13 @@ const getCoffeeStoresByLocation = async (
 };
 
 function validateQuery(query: QueryData) {
-	const { latLong, limit } = query;
+	const { id } = query;
 
-	if (!latLong || typeof latLong !== 'string') {
-		return 'Invalid latLong';
-	}
-
-	if (!limit || typeof limit !== 'string') {
-		return 'Invalid limit';
+	if (!id || typeof id !== 'string') {
+		return 'Invalid id';
 	}
 
 	return null;
 }
 
-export default getCoffeeStoresByLocation;
+export default getCoffeeStoreById;
