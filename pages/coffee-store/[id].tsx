@@ -11,6 +11,7 @@ import {fetchCoffeeStores} from '../../lib/coffee-store';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { StoreContext } from '../../store/storeContext';
 import axios from 'axios';
+import useSWR from 'swr'
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
 	const coffeeStores = await fetchCoffeeStores();
@@ -44,6 +45,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
 	};
 };
 
+export const fetcher = (url: string) => axios.get(url).then((res) => res.data);
+
 const CoffeeStore = (props: { coffeeStore: CoffeeStore | null }) => {
 	const router = useRouter();
 
@@ -54,6 +57,21 @@ const CoffeeStore = (props: { coffeeStore: CoffeeStore | null }) => {
 
 	const [coffeeStore, setCoffeeStore] = useState(props.coffeeStore);
 	const id = router.query.id;
+	const [votingCount, setVotingCount] = useState(1);
+
+	const { data, error, isLoading } = useSWR(`/api/getCoffeeStoreById/?id=${id}`, fetcher);
+
+	if(error){
+		return <div>Something went wrong retrieving coffee store</div>
+	}
+
+	useEffect(() => {
+		if(!data){
+			return;
+		}
+		setCoffeeStore((data as CoffeeStore));
+		setVotingCount((data as CoffeeStore).voting)
+	}, [data]);
 
 	const {
 		state: { coffeeStoresNearMe },
@@ -89,7 +107,9 @@ const CoffeeStore = (props: { coffeeStore: CoffeeStore | null }) => {
 
 	const { address, name, neighborhood, imgUrl } = coffeeStore;
 
-	const handleUpvoteButton = () => {};
+	const handleUpvoteButton = useCallback(() => {
+		setVotingCount(votingCount + 1)
+	}, [votingCount]);
 
 	return (
 		<div className={styles.layout}>
@@ -142,7 +162,7 @@ const CoffeeStore = (props: { coffeeStore: CoffeeStore | null }) => {
 							height={24}
 							alt='Star'
 						/>
-						<p className={styles.text}>1</p>
+						<p className={styles.text}>{votingCount}</p>
 					</div>
 
 					<button

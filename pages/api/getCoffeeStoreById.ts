@@ -11,7 +11,7 @@ type QueryData = {
 
 const getCoffeeStoreById = async (
 	req: NextApiRequest,
-	res: NextApiResponse<Array<CoffeeStore> | ErrorResponse>
+	res: NextApiResponse<CoffeeStore | ErrorResponse>
 ) => {
 	const query = req.query as QueryData;
 	const errorMsg = validateQuery(query);
@@ -30,7 +30,9 @@ const getCoffeeStoreById = async (
 			.firstPage();
 
 		if (findCoffeeStoreRecords.length) {
-            res.json(airtableRecordToCoffeeStore(findCoffeeStoreRecords));
+            res.json(
+				(airtableRecordToCoffeeStore(findCoffeeStoreRecords) as Array<CoffeeStore>)[0]
+			);
 		}
 	} catch (err) {
 		console.error('There is an error', err);

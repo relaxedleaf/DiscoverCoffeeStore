@@ -8,7 +8,7 @@ import { GetStaticProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import axios from 'axios';
-import fetchCoffeeStores from '../lib/coffee-store';
+import { fetchCoffeeStores } from '../lib/coffee-store';
 import styles from '../styles/Home.module.css';
 import useTrackLocation from '../hooks/useTrackLocation';
 
