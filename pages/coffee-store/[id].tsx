@@ -52,12 +52,12 @@ const CoffeeStore = (props: { coffeeStore: CoffeeStore | null }) => {
 
 	// Does route exist in getStaticPaths
 	if (router.isFallback) {
-		return 'Loading';
+		return <></>;
 	}
 
 	const [coffeeStore, setCoffeeStore] = useState(props.coffeeStore);
 	const id = router.query.id;
-	const [votingCount, setVotingCount] = useState(1);
+	const [votingCount, setVotingCount] = useState(0);
 
 	const { data, error, isLoading } = useSWR(`/api/getCoffeeStoreById/?id=${id}`, fetcher);
 
@@ -66,6 +66,7 @@ const CoffeeStore = (props: { coffeeStore: CoffeeStore | null }) => {
 	}
 
 	useEffect(() => {
+		console.log(data);
 		if(!data){
 			return;
 		}
@@ -82,7 +83,12 @@ const CoffeeStore = (props: { coffeeStore: CoffeeStore | null }) => {
 			const response = await axios.post('/api/insertCoffeeStore', {
 				...cs,
 			});
-		} catch (err) {}
+			console.log(response.data);
+			setCoffeeStore(response.data);
+			setVotingCount((response.data as CoffeeStore).voting);
+		} catch (err) {
+			console.log(err);
+		}
 	}, []);
 
 	useEffect(() => {
@@ -101,15 +107,28 @@ const CoffeeStore = (props: { coffeeStore: CoffeeStore | null }) => {
 		}
 	}, [id, props.coffeeStore, coffeeStoresNearMe]);
 
+	const handleUpvoteButton = useCallback(async () => {
+		if(!coffeeStore){
+			return;
+		}
+		try {
+			const response = await axios.put('/api/upvoteCoffeeStoreById', {
+				id: coffeeStore.id
+			})
+			const cf = response.data as CoffeeStore;
+			setVotingCount(cf.voting);
+		} catch (err){
+			console.log(err);
+		}
+
+	}, [coffeeStore]);
+
+
 	if (!coffeeStore) {
-		return 'Loading';
+		return <></>;
 	}
 
 	const { address, name, neighborhood, imgUrl } = coffeeStore;
-
-	const handleUpvoteButton = useCallback(() => {
-		setVotingCount(votingCount + 1)
-	}, [votingCount]);
 
 	return (
 		<div className={styles.layout}>

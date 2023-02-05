@@ -6,7 +6,7 @@ import ErrorResponse from '../types/ErrorResponse';
 
 const insertCoffeeStore = async (
 	req: NextApiRequest,
-	res: NextApiResponse<Array<CoffeeStore> | ErrorResponse>
+	res: NextApiResponse<CoffeeStore | ErrorResponse>
 ) => {
 	try {
 		if (req.method !== 'POST') {
@@ -26,7 +26,7 @@ const insertCoffeeStore = async (
 			.firstPage();
 
 		if (findCoffeeStoreRecords.length) {
-			res.status(400).json({ message: 'Already created' });
+			res.json(airtableRecordToCoffeeStore(findCoffeeStoreRecords)[0]);
 		} else {
 			// Create a record
 			const records = await table.create([
@@ -41,7 +41,7 @@ const insertCoffeeStore = async (
 					},
 				},
 			]);
-			res.json(airtableRecordToCoffeeStore(records));
+			res.json(airtableRecordToCoffeeStore(records)[0]);
 		}
 	} catch (err) {
         const errMsg = 'Error creating or finding a store';

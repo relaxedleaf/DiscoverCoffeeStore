@@ -24,7 +24,6 @@ export const findCoffeeStoreById = async (id: string, options?: {withId: boolean
 			filterByFormula: `id="${id}"`,
 		})
 		.firstPage();
-    console.log(findCoffeeStoreRecords);
 	if (findCoffeeStoreRecords.length) {
         if(options && options.withId){
             return {
