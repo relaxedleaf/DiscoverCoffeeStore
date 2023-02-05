@@ -11,9 +11,28 @@ const base = Airtable.base(process.env.AIRTABLE_BASE_KEY!);
 export const table = base('coffee-stores');
 
 export const airtableRecordToCoffeeStore = (records: Records<FieldSet>) => {
-    return records.map((record) => {
-        return {
-            ...record.fields as CoffeeStore
+	return records.map((record) => {
+		return {
+			...(record.fields as CoffeeStore),
+		};
+	}) as Array<CoffeeStore>;
+};
+
+export const findCoffeeStoreById = async (id: string, options?: {withId: boolean}) => {
+	const findCoffeeStoreRecords = await table
+		.select({
+			filterByFormula: `id="${id}"`,
+		})
+		.firstPage();
+    console.log(findCoffeeStoreRecords);
+	if (findCoffeeStoreRecords.length) {
+        if(options && options.withId){
+            return {
+                coffeeStore: airtableRecordToCoffeeStore(findCoffeeStoreRecords)[0],
+                id: findCoffeeStoreRecords[0].id
+            }
         }
-    }) as Array<CoffeeStore>
-}
+		return airtableRecordToCoffeeStore(findCoffeeStoreRecords)[0];
+	}
+	return null;
+};
