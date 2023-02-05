@@ -60,7 +60,6 @@ const CoffeeStore = (props: { coffeeStore: CoffeeStore | null }) => {
 	);
 
 	useEffect(() => {
-		console.log(data);
 		if (!data) {
 			return;
 		}
@@ -77,7 +76,6 @@ const CoffeeStore = (props: { coffeeStore: CoffeeStore | null }) => {
 			const response = await axios.post('/api/insertCoffeeStore', {
 				...cs,
 			});
-			console.log(response.data);
 			setCoffeeStore(response.data);
 			setVotingCount((response.data as CoffeeStore).voting);
 		} catch (err) {
