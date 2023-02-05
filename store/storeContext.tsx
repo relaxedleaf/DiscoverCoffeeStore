@@ -1,6 +1,6 @@
 import { Dispatch, ReactNode, createContext, useReducer } from 'react';
 
-import CoffeeStore from '../pages/types/CoffeeStore';
+import CoffeeStore from '../types/CoffeeStore';
 
 export type InitialStateType = {
 	latLong: string;

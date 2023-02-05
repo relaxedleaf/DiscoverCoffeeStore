@@ -1,7 +1,7 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 
 import Link from 'next/link';
-import CoffeeStore from '../types/CoffeeStore';
+import CoffeeStore from '../../types/CoffeeStore';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import styles from './coffee-store.module.scss';

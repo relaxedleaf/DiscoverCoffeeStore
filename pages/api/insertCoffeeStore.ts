@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { airtableRecordToCoffeeStore, table } from '../../lib/utils/airtable';
 
-import CoffeeStore from '../types/CoffeeStore';
-import ErrorResponse from '../types/ErrorResponse';
+import CoffeeStore from '../../types/CoffeeStore';
+import ErrorResponse from '../../types/ErrorResponse';
 
 const insertCoffeeStore = async (
 	req: NextApiRequest,

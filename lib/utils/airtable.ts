@@ -1,6 +1,6 @@
 import Airtable, { FieldSet, Records } from 'airtable';
 
-import CoffeeStore from '../../pages/types/CoffeeStore';
+import CoffeeStore from '../../types/CoffeeStore';
 
 Airtable.configure({
 	endpointUrl: 'https://api.airtable.com',

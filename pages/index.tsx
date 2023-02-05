@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react';
 
 import Banner from '../components/banner/banner';
 import Card from '../components/card/card';
-import CoffeeStore from './types/CoffeeStore';
+import CoffeeStore from '../types/CoffeeStore';
 import { GetStaticProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';

@@ -1,5 +1,5 @@
-import CoffeeStore from '../pages/types/CoffeeStore';
-import FourSquarePlaceResponse from '../pages/types/FourSquarePlaceResponse';
+import CoffeeStore from '../types/CoffeeStore';
+import FourSquarePlaceResponse from '../types/FourSquarePlaceResponse';
 import { createApi } from 'unsplash-js';
 import { table } from './utils/airtable';
 

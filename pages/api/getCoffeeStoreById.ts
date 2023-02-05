@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import CoffeeStore from '../types/CoffeeStore';
-import ErrorResponse from '../types/ErrorResponse';
+import CoffeeStore from '../../types/CoffeeStore';
+import ErrorResponse from '../../types/ErrorResponse';
 
 import { airtableRecordToCoffeeStore, table } from '../../lib/utils/airtable';
 
