@@ -78,7 +78,7 @@ const Home = ({ coffeeStores }: { coffeeStores: Array<CoffeeStore> }) => {
 		return () => {
 			mounted = false;
 		};
-	}, [latLong]);
+	}, [latLong, dispatch]);
 
 	const handleOnBannerBtnClick = () => {
 		handleTrackLocation();

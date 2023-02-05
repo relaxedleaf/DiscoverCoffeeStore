@@ -7,11 +7,11 @@ import Head from 'next/head';
 import styles from './coffee-store.module.scss';
 import Image from 'next/image';
 import classNames from 'classnames';
-import {fetchCoffeeStores} from '../../lib/coffee-store';
+import { fetchCoffeeStores } from '../../lib/coffee-store';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { StoreContext } from '../../store/storeContext';
 import axios from 'axios';
-import useSWR from 'swr'
+import useSWR from 'swr';
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
 	const coffeeStores = await fetchCoffeeStores();
@@ -50,28 +50,22 @@ export const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 const CoffeeStore = (props: { coffeeStore: CoffeeStore | null }) => {
 	const router = useRouter();
 
-	// Does route exist in getStaticPaths
-	if (router.isFallback) {
-		return <></>;
-	}
-
 	const [coffeeStore, setCoffeeStore] = useState(props.coffeeStore);
 	const id = router.query.id;
 	const [votingCount, setVotingCount] = useState(0);
 
-	const { data, error, isLoading } = useSWR(`/api/getCoffeeStoreById/?id=${id}`, fetcher);
-
-	if(error){
-		return <div>Something went wrong retrieving coffee store</div>
-	}
+	const { data, error } = useSWR(
+		`/api/getCoffeeStoreById/?id=${id}`,
+		fetcher
+	);
 
 	useEffect(() => {
 		console.log(data);
-		if(!data){
+		if (!data) {
 			return;
 		}
-		setCoffeeStore((data as CoffeeStore));
-		setVotingCount((data as CoffeeStore).voting)
+		setCoffeeStore(data as CoffeeStore);
+		setVotingCount((data as CoffeeStore).voting);
 	}, [data]);
 
 	const {
@@ -102,30 +96,33 @@ const CoffeeStore = (props: { coffeeStore: CoffeeStore | null }) => {
 				setCoffeeStore(cs);
 				handleCreateCoffeeStore(cs);
 			}
-		} else if (props.coffeeStore){
+		} else if (props.coffeeStore) {
 			handleCreateCoffeeStore(props.coffeeStore);
 		}
-	}, [id, props.coffeeStore, coffeeStoresNearMe]);
+	}, [id, props.coffeeStore, coffeeStoresNearMe, handleCreateCoffeeStore]);
 
 	const handleUpvoteButton = useCallback(async () => {
-		if(!coffeeStore){
+		if (!coffeeStore) {
 			return;
 		}
 		try {
 			const response = await axios.put('/api/upvoteCoffeeStoreById', {
-				id: coffeeStore.id
-			})
+				id: coffeeStore.id,
+			});
 			const cf = response.data as CoffeeStore;
 			setVotingCount(cf.voting);
-		} catch (err){
+		} catch (err) {
 			console.log(err);
 		}
-
 	}, [coffeeStore]);
 
-
-	if (!coffeeStore) {
+	// Does route exist in getStaticPaths
+	if (router.isFallback || !coffeeStore) {
 		return <></>;
+	}
+
+	if (error) {
+		return <div>Something went wrong retrieving coffee store</div>;
 	}
 
 	const { address, name, neighborhood, imgUrl } = coffeeStore;
