@@ -108,6 +108,7 @@ const Home = ({ coffeeStores }: { coffeeStores: Array<CoffeeStore> }) => {
 						width={700}
 						height={400}
 						alt='hero image'
+						priority
 					/>
 				</div>
 				<CoffeeStoreSection
