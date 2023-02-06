@@ -104,7 +104,7 @@ const Home = ({ coffeeStores }: { coffeeStores: Array<CoffeeStore> }) => {
 				{coffeeStoresError && <p>{coffeeStoresError}</p>}
 				<div className={styles.heroImage}>
 					<Image
-						src='/static/hero-image.png'
+						src='/static/hero-image.webp'
 						width={700}
 						height={400}
 						alt='hero image'

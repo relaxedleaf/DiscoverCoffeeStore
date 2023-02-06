@@ -8,7 +8,7 @@ body {
 }
 
 body {
-	background: url('/static/background.png');
+	background: url('/static/background.webp');
 	background-position: 50%;
 	background-repeat: no-repeat;
 	background-size: cover;
